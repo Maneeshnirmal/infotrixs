@@ -1,0 +1,197 @@
+------------------------------------------- TASK 1------------------------------------------------------
+-------------------------------------PART 1 Launch EC2 Instance.----------------------------------
+
+1. Log in to AWS Console,open EC2 service, and click on launch instance.
+
+2. Name your instance `Mysql_wordpress` and choose Amazon Linux 2 AMI which is free tier eligible.
+3. Choose t.2 micro as instance type which is also Free tier eligible. Also choose your keypair.
+4. In the next part, we will need to create a security group which would allow traffic from both ssh port (22) and Mysql/Aurora port (3306).
+5.Finally, click on Launch instance to finish the process.
+
+-------------------------------------------------------------------------------------------------------------------------------------
+
+-------------------------------------------------------------PART 2--------------------------------
+To deploy WordPress and MySQL on a single EC2 instance, you can follow these steps. Before you begin, make sure you have an AWS account and have launched an EC2 instance with the desired operating system. In this example, I'll use Amazon Linux 2.
+
+1. **Connect to Your EC2 Instance**:
+   Use SSH to connect to your EC2 instance using the private key (.pem) you used during the instance creation.
+
+
+   CMD:ssh -i /path/to/your/key.pem ec2-user@<your-instance-IP>
+
+
+2. **Update the System**:
+   It's a good practice to update the system packages before installing any software:
+   CMD:sudo yum update -y
+
+
+3. **Install MySQL**:
+   Install the MySQL server and start it:
+
+   cmd:
+   sudo yum install httpd
+   sudo systemctl start httpd
+   sudo systemctl enable httpd
+   sudo yum install mariadb-server -y
+   sudo systemctl start mariadb
+   sudo systemctl enable mariadb
+   sudo mysql_secure_installation
+   
+
+   Follow the prompts to set up a secure MySQL root password and answer the questions.
+
+4. **Install PHP**:
+   Install PHP and required modules:
+
+  
+   sudo yum install php-mysqlnd -y
+ 
+
+5. **Download and Install WordPress**:
+   Download the latest WordPress release and extract it into your web server's document root:
+
+   cmd:
+   cd /var/www/html
+   sudo wget https://wordpress.org/latest.tar.gz
+   sudo tar -xzf latest.tar.gz
+   sudo mv wordpress/* .
+   sudo rmdir wordpress
+   
+
+6. **Create a MySQL Database for WordPress**:
+   Log in to MySQL and create a database and user for WordPress:
+
+   CMD:
+   mysql -u root -p
+   CMD:
+   CREATE DATABASE wordpress1;
+   CREATE USER 'root'@'3.14.14.63' IDENTIFIED BY '1234';
+   GRANT ALL PRIVILEGES ON wordpress.* TO 'root'@'3.14.14.63';
+   FLUSH PRIVILEGES;
+   EXIT;
+  
+
+7. **Configure WordPress**:
+   Rename the WordPress sample configuration file and update it with your database information:
+
+   cmd:
+   sudo mv wp-config-sample.php wp-config.php
+   sudo nano wp-config.php
+   
+
+   Update the following lines with your database information:
+
+   <?PHP
+   define('DB_NAME', 'wordpress');
+   define('DB_USER', 'wordpressuser');
+   define('DB_PASSWORD', 'yourpassword');
+  >?
+
+   Save and exit the editor.
+
+8. **Set Permissions**:
+   Set the correct permissions for WordPress:
+
+   CMD:
+   sudo chown -R apache:apache /var/www/html/
+  
+
+9. **Restart Services**:
+   Restart Apache to apply the changes:
+
+   
+   sudo systemctl restart httpd
+  
+
+10. **Access WordPress**:
+    Open a web browser and navigate to your EC2 instance's public IP address. 
+
+------------------------------------------------------------------------------------------------------------
+
+
+
+------------------------------------TASK 2---------------------------------------------------------------
+
+-------------------------------------PART 1 Launch EC2 Instance.----------------------------------------
+
+1. Log in to AWS Console,open EC2 service, and click on launch instance. create 2 instance
+
+2. Name your instance `deploy_mysql & deploy_wordpress1` and choose Amazon Linux 2 AMI which is free tier eligible.
+3. Choose t.2 micro as instance type which is also Free tier eligible. Also choose your keypair.
+4. In the next part, we will need to create a security group which would allow traffic from both ssh port (22) and Mysql/Aurora port (3306).
+5.Finally, click on Launch instance to finish the process.
+
+-------------------------------------------------------------PART 2--------------------------------
+To deploy WordPress and MySQL on a 2 EC2 instance, you can follow these steps. Before you begin, make sure you have an AWS account and have launched an EC2 instance with the desired operating system. In this example, I'll use Amazon Linux 2.
+
+1. **Connect to Your EC2 Instance* separately
+   Use SSH to connect to your EC2 instance using the private key (.pem) you used during the instance creation.
+
+
+   CMD:ssh -i /path/to/your/key.pem ec2-user@<your-instance-IP>
+
+
+2. **Update the System**:
+   It's a good practice to update the system packages before installing any software:
+   CMD:sudo yum update -y
+
+3. Set Up MySQL on the MySQL Instance: 
+    **Install MySQL**:
+   Install the MySQL server and start it:
+
+   cmd:
+   sudo yum install httpd
+   sudo systemctl start httpd
+   sudo systemctl enable httpd
+   sudo yum install mariadb-server -y
+   sudo systemctl start mariadb
+   sudo systemctl enable mariadb
+   sudo mysql_secure_installation
+   
+**Install PHP**:
+   Install PHP and required modules:
+
+  
+   sudo yum install php-mysqlnd -y
+
+4. Set Up WordPress on the WordPress Instance:
+
+    **Download and Install WordPress**:
+   Download the latest WordPress release and extract it into your web server's document root:
+
+   cmd:
+   cd /var/www/html
+   sudo wget https://wordpress.org/latest.tar.gz
+   sudo tar -xzf latest.tar.gz
+   sudo mv wordpress/* .
+   sudo rmdir wordpress
+
+5. Configure WordPress to Use MySQL:
+    **Configure WordPress**:
+   Rename the WordPress sample configuration file and update it with your database information:
+
+   cmd:
+   sudo mv wp-config-sample.php wp-config.php
+   sudo nano wp-config.php
+   
+
+   Update the following lines with your database information:
+
+   <?PHP
+   define('DB_NAME', 'wordpress');
+   define('DB_USER', 'wordpressuser');
+   define('DB_PASSWORD', 'yourpassword');
+  >?
+
+   Save and exit the editor.
+
+   Database Name(DB_NAME): Use the name of the MySQL database you created.
+   Username(DB_USER): Use the MySQL user you created.
+   Password(DB_PASSWORD): Use the password for the MySQL user.
+   Database Host(DB_HOST): Provide the private IP or private DNS name of the MySQL instance (to keep traffic within your VPC).
+   Complete the WordPress installation
+
+6. **Access WordPress**:
+    Open a web browser and navigate to your EC2 instance's public IP address.
+
+
